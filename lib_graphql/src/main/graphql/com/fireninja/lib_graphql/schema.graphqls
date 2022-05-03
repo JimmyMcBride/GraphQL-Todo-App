@@ -1,0 +1,67 @@
+#
+type User {
+  authToken: String
+  createdAt: String!
+  email: String!
+  firstName: String!
+  id: Int!
+  lastName: String!
+}
+
+#
+type Todo {
+  completed: Boolean!
+  description: String!
+  id: Int!
+  title: String!
+}
+
+#
+input RegisterUserParams {
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+}
+
+#
+input LoginUserParams {
+  email: String!
+  password: String!
+}
+
+#
+input NewTodoParams {
+  completed: Boolean
+  description: String!
+  title: String!
+}
+
+#
+input EditTodoParams {
+  completed: Boolean
+  description: String
+  id: Int!
+  title: String
+}
+
+# The Short scalar type represents a signed 16-bit numeric non-fractional value
+scalar Short
+
+# The Long scalar type represents a signed 64-bit numeric non-fractional value
+scalar Long
+
+# Query object
+type Query {
+  register(params: RegisterUserParams!): User!
+  login(params: LoginUserParams!): User!
+  todos: [Todo!]!
+  hello: String!
+}
+
+# Mutation object
+type Mutation {
+  addTodo(newTodo: NewTodoParams!): Todo!
+  editTodo(editTodo: EditTodoParams!): Todo!
+  deleteTodo(todoId: Int!): Boolean!
+}

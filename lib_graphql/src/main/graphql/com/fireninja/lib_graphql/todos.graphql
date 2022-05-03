@@ -1,0 +1,30 @@
+query AllTodos {
+  todos {
+    id
+    title
+    description
+    completed
+  }
+}
+
+mutation AddTodo($newTodo: NewTodoParams!) {
+  addTodo(newTodo: $newTodo) {
+    id
+    title
+    description
+    completed
+  }
+}
+
+mutation EditTodo($editTodo: EditTodoParams!) {
+  editTodo(editTodo: $editTodo) {
+    id
+    title
+    description
+    completed
+  }
+}
+
+mutation DeleteTodo($id: Int!) {
+  deleteTodo(todoId: $id)
+}

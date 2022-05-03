@@ -1,0 +1,19 @@
+query Login($params: LoginUserParams!) {
+  login(params: $params) {
+    id
+    firstName
+    lastName
+    email
+    authToken
+  }
+}
+
+query Register($params: RegisterUserParams!) {
+  register(params: $params) {
+    id
+    firstName
+    lastName
+    email
+    authToken
+  }
+}
