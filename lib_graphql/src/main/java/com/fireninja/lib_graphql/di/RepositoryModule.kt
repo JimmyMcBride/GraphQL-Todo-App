@@ -3,10 +3,15 @@ package com.fireninja.lib_graphql.di
 import android.content.Context
 import com.fireninja.lib_graphql.data.repository.DataStoreOperationsImpl
 import com.fireninja.lib_graphql.data.repository.Repository
+import com.fireninja.lib_graphql.data.repository.SharedPreferencesSourceImpl
 import com.fireninja.lib_graphql.domain.repository.DataStoreOperations
+import com.fireninja.lib_graphql.domain.repository.SharedPreferencesSource
+import com.fireninja.lib_graphql.domain.use_cases.preferences.GetAuthTokenUseCase
 import com.fireninja.lib_graphql.domain.use_cases.UseCases
+import com.fireninja.lib_graphql.domain.use_cases.auth.GetAuthStatusUseCase
 import com.fireninja.lib_graphql.domain.use_cases.datastore.ReadAuthTokenUseCase
 import com.fireninja.lib_graphql.domain.use_cases.datastore.SaveAuthTokenUseCase
+import com.fireninja.lib_graphql.domain.use_cases.preferences.SetAuthTokenUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,9 +25,9 @@ object RepositoryModule {
   @Provides
   @Singleton
   fun provideDataStoreOperations(
-    @ApplicationContext context: Context
+    @ApplicationContext context: Context,
   ): DataStoreOperations {
-    return DataStoreOperationsImpl(context = context)
+    return DataStoreOperationsImpl(context)
   }
 
   @Provides
@@ -31,6 +36,9 @@ object RepositoryModule {
     return UseCases(
       saveAuthTokenUseCase = SaveAuthTokenUseCase(repository),
       readAuthTokenUseCase = ReadAuthTokenUseCase(repository),
+      getAuthTokenUseCase = GetAuthTokenUseCase(repository),
+      setAuthTokenUseCase = SetAuthTokenUseCase(repository),
+      getAuthStatusUseCase = GetAuthStatusUseCase(repository),
     )
   }
 }
