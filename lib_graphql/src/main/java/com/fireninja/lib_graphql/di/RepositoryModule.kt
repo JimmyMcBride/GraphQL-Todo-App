@@ -12,6 +12,7 @@ import com.fireninja.lib_graphql.domain.use_cases.auth.GetAuthStatusUseCase
 import com.fireninja.lib_graphql.domain.use_cases.datastore.ReadAuthTokenUseCase
 import com.fireninja.lib_graphql.domain.use_cases.datastore.SaveAuthTokenUseCase
 import com.fireninja.lib_graphql.domain.use_cases.preferences.SetAuthTokenUseCase
+import com.fireninja.lib_graphql.domain.use_cases.tasks.GetAllTasksUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,6 +40,7 @@ object RepositoryModule {
       getAuthTokenUseCase = GetAuthTokenUseCase(repository),
       setAuthTokenUseCase = SetAuthTokenUseCase(repository),
       getAuthStatusUseCase = GetAuthStatusUseCase(repository),
+      getAllTasksUseCase = GetAllTasksUseCase(repository),
     )
   }
 }

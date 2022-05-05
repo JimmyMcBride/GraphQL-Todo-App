@@ -4,17 +4,16 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fireninja.AddTodoMutation
 import com.fireninja.AllTodosQuery
 import com.fireninja.graphqltodo.util.Action
 import com.fireninja.graphqltodo.util.Constants.MAX_TITLE_LENGTH
 import com.fireninja.graphqltodo.util.RequestState
 import com.fireninja.graphqltodo.util.SearchAppBarState
 import com.fireninja.lib_graphql.domain.use_cases.UseCases
+import com.fireninja.type.NewTodoParams
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -46,6 +45,7 @@ class SharedViewModel @Inject constructor(
 
   init {
 //    persistSortingState(Priority.NONE)
+    useCases.setAuthTokenUseCase("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJyYXZlYml6ei1hc3Nlc3NtZW50cy1hcHAiLCJpc3MiOiJyYXZlYml6ei1hc3Nlc3NtZW50cy1hcHAiLCJpZCI6Mn0.f0ZJ6U6rBM_dtxENCOaUcQ4PsQ86xJp5n2DfGy9ZB5k")
     getAllTasks()
 //    readSortState()
   }
@@ -54,9 +54,9 @@ class SharedViewModel @Inject constructor(
     _allTasks.value = RequestState.Loading
     try {
       viewModelScope.launch {
-//        useCases.getAllTodos().collect {
-//          _allTasks.value = RequestState.Success(it)
-//        }
+        useCases.getAllTasksUseCase().run {
+          _allTasks.value = RequestState.Success(this)
+        }
       }
     } catch (err: Exception) {
       _allTasks.value = RequestState.Error(err)
@@ -126,11 +126,10 @@ class SharedViewModel @Inject constructor(
 
   private fun addTask() {
     viewModelScope.launch(Dispatchers.IO) {
-//      val todoTask = AddTodoMutation.AddTodo(
-//        title = title.value,
-//        description = description.value,
-//        completed = completed.value
-//      )
+      val todoTask = NewTodoParams(
+        title = title.value,
+        description = description.value
+      )
 //      repository.addTask(todoTask)
     }
   }

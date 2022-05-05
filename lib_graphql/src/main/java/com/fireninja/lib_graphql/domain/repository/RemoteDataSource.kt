@@ -5,4 +5,5 @@ import com.fireninja.AllTodosQuery
 interface RemoteDataSource {
   suspend fun getAuthStatus(): String?
   suspend fun getAllTodos(): List<AllTodosQuery.Todo>?
+  suspend fun addNewTask()
 }

@@ -1,5 +1,6 @@
 package com.fireninja.lib_graphql.data.repository
 
+import com.fireninja.AllTodosQuery
 import com.fireninja.lib_graphql.domain.repository.DataStoreOperations
 import com.fireninja.lib_graphql.domain.repository.RemoteDataSource
 import com.fireninja.lib_graphql.domain.repository.SharedPreferencesSource
@@ -29,5 +30,13 @@ class Repository @Inject constructor(
 
   fun setAuthToken(token: String) {
     return sharedPreferences.setBearerToken(token)
+  }
+
+  suspend fun getAllTasks(): List<AllTodosQuery.Todo> {
+    return remote.getAllTodos() ?: emptyList()
+  }
+
+  suspend fun addNewTask() {
+//    return remote.add() ?: emptyList()
   }
 }
