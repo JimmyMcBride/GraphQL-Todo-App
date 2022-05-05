@@ -3,6 +3,7 @@ import Versions.apollo
 import Versions.coroutines
 import Versions.datastore
 import Versions.hilt
+import Versions.navigation
 
 object Versions {
   const val gradle = "7.1.3"
@@ -12,8 +13,9 @@ object Versions {
   const val apollo = "3.2.1"
   const val hilt = "2.41"
   const val coroutines = "1.6.1"
-  const val accompanist = "0.23.1"
+  const val accompanist = "0.21.4-beta"
   const val datastore = "1.0.0"
+  const val navigation = "2.5.0-beta01"
 }
 
 object Deps {
@@ -27,4 +29,6 @@ object Deps {
   const val accompanistNavigationAnimation = "com.google.accompanist:accompanist-navigation-animation:$accompanist"
   // Datastore dependencies
   const val datastorePreferences = "androidx.datastore:datastore-preferences:$datastore"
+  // Compose Navigation
+  const val composeNavigation = "androidx.navigation:navigation-compose:$navigation"
 }

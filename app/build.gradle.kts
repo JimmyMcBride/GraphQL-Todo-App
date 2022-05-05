@@ -66,6 +66,9 @@ dependencies {
   implementation(Deps.hiltAndroid)
   kapt(Deps.hiltCompiler)
   implementation(Deps.apolloRuntime)
+//  implementation(Deps.accompanistNavigationAnimation)
+
+  implementation(Deps.composeNavigation)
   implementation(Deps.accompanistNavigationAnimation)
 
   implementation(project(":lib_graphql"))
