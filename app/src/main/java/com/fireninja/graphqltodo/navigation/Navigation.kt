@@ -4,12 +4,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.fireninja.graphqltodo.navigation.destinations.listComposable
 import com.fireninja.graphqltodo.navigation.destinations.splashComposable
 import com.fireninja.graphqltodo.navigation.destinations.taskComposable
