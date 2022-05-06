@@ -35,6 +35,8 @@ android {
 
 apollo {
   packageName.set("com.fireninja")
+  generateKotlinModels.set(true)
+  generateOptionalOperationVariables.set(false)
 }
 
 dependencies {

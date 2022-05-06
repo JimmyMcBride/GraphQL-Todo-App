@@ -5,7 +5,7 @@ import com.fireninja.lib_graphql.domain.use_cases.datastore.ReadAuthTokenUseCase
 import com.fireninja.lib_graphql.domain.use_cases.datastore.SaveAuthTokenUseCase
 import com.fireninja.lib_graphql.domain.use_cases.preferences.GetAuthTokenUseCase
 import com.fireninja.lib_graphql.domain.use_cases.preferences.SetAuthTokenUseCase
-import com.fireninja.lib_graphql.domain.use_cases.tasks.GetAllTasksUseCase
+import com.fireninja.lib_graphql.domain.use_cases.tasks.*
 
 data class UseCases(
   val saveAuthTokenUseCase: SaveAuthTokenUseCase,
@@ -14,4 +14,8 @@ data class UseCases(
   val setAuthTokenUseCase: SetAuthTokenUseCase,
   val getAuthStatusUseCase: GetAuthStatusUseCase,
   val getAllTasksUseCase: GetAllTasksUseCase,
+  val addNewTaskUseCase: AddNewTaskUseCase,
+  val getTaskByIdUseCase: GetTaskByIdUseCase,
+  val editTaskUseCase: EditTaskUseCase,
+  val deleteTaskUseCase: DeleteTaskUseCase,
 )

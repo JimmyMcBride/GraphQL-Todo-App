@@ -7,6 +7,15 @@ query AllTodos {
   }
 }
 
+query TodoById($todoId: Int!) {
+  todo(todoId: $todoId) {
+    id
+    title
+    description
+    completed
+  }
+}
+
 mutation AddTodo($newTodo: NewTodoParams!) {
   addTodo(newTodo: $newTodo) {
     id

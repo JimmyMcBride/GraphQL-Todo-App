@@ -19,7 +19,7 @@ import com.google.accompanist.navigation.animation.composable
 @ExperimentalAnimationApi
 fun NavGraphBuilder.taskComposable(
   navigateToListScreen: (Action) -> Unit,
-  sharedViewModel: SharedViewModel
+  sharedViewModel: SharedViewModel,
 ) {
   composable(
     TASK_SCREEN,
@@ -45,7 +45,7 @@ fun NavGraphBuilder.taskComposable(
 
     LaunchedEffect(key1 = selectedTask) {
       if (selectedTask != null || taskId == -1) {
-//        sharedViewModel.updateTaskFields(selectedTask)
+        sharedViewModel.updateTaskFields(selectedTask)
       }
     }
 

@@ -1,15 +1,19 @@
 package com.fireninja.graphqltodo.viewModels
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.apollographql.apollo3.api.Optional
 import com.fireninja.AllTodosQuery
 import com.fireninja.graphqltodo.util.Action
 import com.fireninja.graphqltodo.util.Constants.MAX_TITLE_LENGTH
 import com.fireninja.graphqltodo.util.RequestState
 import com.fireninja.graphqltodo.util.SearchAppBarState
+import com.fireninja.lib_graphql.domain.models.Task
 import com.fireninja.lib_graphql.domain.use_cases.UseCases
+import com.fireninja.type.EditTodoParams
 import com.fireninja.type.NewTodoParams
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -34,20 +38,18 @@ class SharedViewModel @Inject constructor(
     mutableStateOf(SearchAppBarState.CLOSED)
   val searchTextState: MutableState<String> = mutableStateOf("")
 
-  private val _allTasks = MutableStateFlow<RequestState<List<AllTodosQuery.Todo>>>(RequestState.Idle)
-  val allTasks: StateFlow<RequestState<List<AllTodosQuery.Todo>>> = _allTasks
+  private val _allTasks =
+    MutableStateFlow<RequestState<MutableList<Task>>>(
+      RequestState.Idle)
+  val allTasks: StateFlow<RequestState<List<Task>>> = _allTasks
 
-  private val _searchedTasks = MutableStateFlow<RequestState<List<AllTodosQuery.Todo>>>(RequestState.Idle)
-  val searchedTasks: StateFlow<RequestState<List<AllTodosQuery.Todo>>> = _searchedTasks
-
-//  private val _sortState = MutableStateFlow<RequestState<Priority>>(RequestState.Idle)
-//  val sortState: StateFlow<RequestState<Priority>> = _sortState
+  private val _searchedTasks =
+    MutableStateFlow<RequestState<List<Task>>>(RequestState.Idle)
+  val searchedTasks: StateFlow<RequestState<List<Task>>> =
+    _searchedTasks
 
   init {
-//    persistSortingState(Priority.NONE)
-    useCases.setAuthTokenUseCase("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJyYXZlYml6ei1hc3Nlc3NtZW50cy1hcHAiLCJpc3MiOiJyYXZlYml6ei1hc3Nlc3NtZW50cy1hcHAiLCJpZCI6Mn0.f0ZJ6U6rBM_dtxENCOaUcQ4PsQ86xJp5n2DfGy9ZB5k")
     getAllTasks()
-//    readSortState()
   }
 
   private fun getAllTasks() {
@@ -55,7 +57,7 @@ class SharedViewModel @Inject constructor(
     try {
       viewModelScope.launch {
         useCases.getAllTasksUseCase().run {
-          _allTasks.value = RequestState.Success(this)
+          _allTasks.value = RequestState.Success(this.toMutableList())
         }
       }
     } catch (err: Exception) {
@@ -64,63 +66,27 @@ class SharedViewModel @Inject constructor(
 
   }
 
-//  fun searchDatabase(searchQuery: String) {
-//    _searchedTasks.value = RequestState.Loading
-//    try {
-//      viewModelScope.launch {
-//        repository.searchDatabase("%$searchQuery%").collect {
-//          _searchedTasks.value = RequestState.Success(it)
-//        }
-//      }
-//    } catch (err: Exception) {
-//      _searchedTasks.value = RequestState.Error(err)
-//    }
-//    searchAppBarState.value = SearchAppBarState.TRIGGERED
-//  }
+  fun searchDatabase(searchQuery: String) {
+    _searchedTasks.value = RequestState.Loading
+    try {
+      viewModelScope.launch {
+        // Todo
+      }
+    } catch (err: Exception) {
+      _searchedTasks.value = RequestState.Error(err)
+    }
+    searchAppBarState.value = SearchAppBarState.TRIGGERED
+  }
 
-//  val lowPriorityTasks: StateFlow<List<AllTodosQuery.Todo>> =
-//    repository.sortByLowPriority.stateIn(
-//      scope = viewModelScope,
-//      started = SharingStarted.WhileSubscribed(),
-//      emptyList()
-//    )
-
-//  val highPriorityTasks: StateFlow<List<AllTodosQuery.Todo>> =
-//    repository.sortByHighPriority.stateIn(
-//      scope = viewModelScope,
-//      started = SharingStarted.WhileSubscribed(),
-//      emptyList()
-//    )
-
-//  private fun readSortState() {
-//    _sortState.value = RequestState.Loading
-//    try {
-//      viewModelScope.launch {
-//        dataStoreRepository.readSortState
-//          .map { Priority.valueOf(it) }
-//          .collect {
-//            _sortState.value = RequestState.Success(it)
-//          }
-//      }
-//    } catch (e: Exception) {
-//      _sortState.value = RequestState.Error(e)
-//    }
-//  }
-
-//  fun persistSortingState(priority: Priority) {
-//    viewModelScope.launch(Dispatchers.IO) {
-//      dataStoreRepository.persistSortState(priority)
-//    }
-//  }
-
-  private val _selectedTask: MutableStateFlow<AllTodosQuery.Todo?> = MutableStateFlow(null)
-  val selectedTask: StateFlow<AllTodosQuery.Todo?> = _selectedTask
+  private val _selectedTask: MutableStateFlow<Task?> =
+    MutableStateFlow(null)
+  val selectedTask: StateFlow<Task?> = _selectedTask
 
   fun getSelectedTask(taskId: Int) {
     viewModelScope.launch {
-//      repository.getSelectedTask(taskId).collect { task ->
-//        _selectedTask.value = task
-//      }
+      if (taskId != -1) {
+        _selectedTask.value = useCases.getTaskByIdUseCase(taskId)
+      }
     }
   }
 
@@ -130,39 +96,54 @@ class SharedViewModel @Inject constructor(
         title = title.value,
         description = description.value
       )
-//      repository.addTask(todoTask)
+      val todo = useCases.addNewTaskUseCase(todoTask)
+      when (_allTasks.value) {
+        is RequestState.Success -> {
+          (_allTasks.value as RequestState.Success<MutableList<Task>>)
+            .data.add(todo)
+        }
+        else -> {}
+      }
     }
   }
 
   private fun updateTask() {
     viewModelScope.launch(Dispatchers.IO) {
-//      val todoTask = AllTodosQuery.Todo(
-//        id = id.value,
-//        title = title.value,
-//        description = description.value,
-//        completed = completed.value
-//      )
-//      repository.updateTask(todoTask)
+      val todoTask = EditTodoParams(
+        id = id.value,
+        title = Optional.presentIfNotNull(title.value),
+        description = Optional.presentIfNotNull(description.value),
+        completed = Optional.presentIfNotNull(completed.value)
+      )
+      Log.d("RemoteDataSource", "updateTask: $todoTask")
+      val task = useCases.editTaskUseCase(todoTask)
+      _allTasks.value.apply {
+        if (this is RequestState.Success) {
+          this.data.map {
+            if (it.id == todoTask.id) {
+              it.title = task.title
+              it.description = task.description
+            }
+          }
+        }
+      }
     }
   }
 
   private fun deleteTask() {
     viewModelScope.launch(Dispatchers.IO) {
-      val todoTask = AllTodosQuery.Todo(
-        id = id.value,
-        title = title.value,
-        description = description.value,
-        completed = completed.value
-      )
-//      repository.deleteTask(todoTask)
+      useCases.deleteTaskUseCase(id.value)
+      _allTasks.value.apply {
+        if (this is RequestState.Success) {
+          this.data.filter { it.id == id.value }
+        }
+      }
     }
   }
 
   private fun deleteAllTasks() {
     viewModelScope.launch(Dispatchers.IO) {
-//      repository.deleteAllTasks()
-//      dataStoreRepository.persistSortState(Priority.NONE)
-//      readSortState()
+      // Todo
     }
   }
 
@@ -188,19 +169,17 @@ class SharedViewModel @Inject constructor(
     }
   }
 
-//  fun updateTaskFields(selectedTask: AllTodosQuery.Todo?) {
-//    if (selectedTask != null) {
-//      id.value = selectedTask.id
-//      title.value = selectedTask.title
-//      description.value = selectedTask.description
-//      priority.value = selectedTask.priority
-//    } else {
-//      id.value = 0
-//      title.value = ""
-//      description.value = ""
-//      priority.value = Priority.LOW
-//    }
-//  }
+  fun updateTaskFields(selectedTask: Task?) {
+    if (selectedTask != null) {
+      id.value = selectedTask.id
+      title.value = selectedTask.title
+      description.value = selectedTask.description.toString()
+    } else {
+      id.value = 0
+      title.value = ""
+      description.value = ""
+    }
+  }
 
   fun updateTitle(newTitle: String) {
     if (newTitle.length < MAX_TITLE_LENGTH) {

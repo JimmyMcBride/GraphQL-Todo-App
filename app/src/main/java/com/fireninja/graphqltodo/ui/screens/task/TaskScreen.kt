@@ -11,11 +11,12 @@ import androidx.compose.ui.platform.LocalContext
 import com.fireninja.AllTodosQuery
 import com.fireninja.graphqltodo.util.Action
 import com.fireninja.graphqltodo.viewModels.SharedViewModel
+import com.fireninja.lib_graphql.domain.models.Task
 
 @Composable
 fun TaskScreen(
   navigateToListScreen: (Action) -> Unit,
-  selectedTask: AllTodosQuery.Todo?,
+  selectedTask: Task?,
   sharedViewModel: SharedViewModel
 ) {
   val title: String by sharedViewModel.title

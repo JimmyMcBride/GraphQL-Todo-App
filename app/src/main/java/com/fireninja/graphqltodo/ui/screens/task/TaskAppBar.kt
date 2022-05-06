@@ -11,18 +11,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import com.fireninja.AllTodosQuery
 import com.fireninja.graphqltodo.util.Action
 import com.fireninja.graphqltodo.R
 import com.fireninja.graphqltodo.ui.components.DisplayAlertDialog
 import com.fireninja.graphqltodo.ui.theme.topAppBarBackgroundColor
 import com.fireninja.graphqltodo.ui.theme.topAppBarContentColor
+import com.fireninja.lib_graphql.domain.models.Task
 
 @Composable
 fun TaskAppBar(
   navigateToListScreen: (Action) -> Unit,
-  selectedTask: AllTodosQuery.Todo?
+  selectedTask: Task?
 ) {
+  Log.d("asdf", "TaskAppBar: ${selectedTask.toString()}")
   if (selectedTask == null) {
     NewTaskAppBar(navigateToListScreen)
   } else {
@@ -57,7 +58,7 @@ fun NewTaskAppBar(
 
 @Composable
 fun ExistingTaskAppBar(
-  selectedTask: AllTodosQuery.Todo,
+  selectedTask: Task,
   navigateToListScreen: (Action) -> Unit
 ) {
   TopAppBar(
@@ -81,7 +82,7 @@ fun ExistingTaskAppBar(
 
 @Composable
 fun ExistingTaskAppBarActions(
-  selectedTask: AllTodosQuery.Todo,
+  selectedTask: Task,
   navigateToListScreen: (Action) -> Unit
 ) {
   var openDialog by remember {
@@ -186,7 +187,7 @@ fun NewTaskAppBarPreview() {
 @Preview
 fun ExistingTaskAppBarPreview() {
   ExistingTaskAppBar(
-    selectedTask = AllTodosQuery.Todo(
+    selectedTask = Task(
       0,
       "Heal",
       "Don't do crazy shit until you have healed!",

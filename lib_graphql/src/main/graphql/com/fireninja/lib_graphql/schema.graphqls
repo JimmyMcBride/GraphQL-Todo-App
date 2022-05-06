@@ -56,6 +56,7 @@ type Query {
   register(params: RegisterUserParams!): User!
   login(params: LoginUserParams!): User!
   todos: [Todo!]!
+  todo(todoId: Int!): Todo!
   hello: String!
 }
 

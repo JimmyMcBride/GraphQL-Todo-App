@@ -33,59 +33,31 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.fireninja.graphqltodo.R
 import com.fireninja.graphqltodo.ui.theme.*
+import com.fireninja.lib_graphql.domain.models.Task
 
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun ListContent(
-  allTasks: RequestState<List<AllTodosQuery.Todo>>,
-  searchedTasks: RequestState<List<AllTodosQuery.Todo>>,
+  allTasks: RequestState<List<Task>>,
+  searchedTasks: RequestState<List<Task>>,
   navigateToTaskScreen: (taskId: Int) -> Unit,
   searchAppBarState: SearchAppBarState,
-//  sortState: RequestState<Priority>,
-//  lowPriorityTasks: List<AllTodosQuery.Todo>,
-//  highPriorityTasks: List<AllTodosQuery.Todo>,
-  onSwipeToDelete: (Action, AllTodosQuery.Todo) -> Unit,
+  onSwipeToDelete: (Action, Task) -> Unit,
 ) {
   if (allTasks is RequestState.Success) {
     HandleListContent(tasks = allTasks.data, navigateToTaskScreen,
       onSwipeToDelete)
   }
-//  if (sortState is RequestState.Success) {
-//    when {
-//      searchAppBarState == SearchAppBarState.TRIGGERED -> {
-//        if (searchedTasks is RequestState.Success) {
-//          HandleListContent(
-//            tasks = searchedTasks.data,
-//            navigateToTaskScreen,
-//            onSwipeToDelete
-//          )
-//        }
-//      }
-//      sortState.data == Priority.NONE -> {
-//        if (allTasks is RequestState.Success) {
-//          HandleListContent(tasks = allTasks.data, navigateToTaskScreen, onSwipeToDelete)
-//        }
-//      }
-//      sortState.data == Priority.LOW -> {
-//        HandleListContent(tasks = lowPriorityTasks, navigateToTaskScreen, onSwipeToDelete)
-//      }
-//      sortState.data == Priority.HIGH -> {
-//        HandleListContent(tasks = highPriorityTasks, navigateToTaskScreen, onSwipeToDelete)
-//      }
-//    }
-//  }
-
-
 }
 
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun HandleListContent(
-  tasks: List<AllTodosQuery.Todo>,
+  tasks: List<Task>,
   navigateToTaskScreen: (taskId: Int) -> Unit,
-  onSwipeToDelete: (Action, AllTodosQuery.Todo) -> Unit,
+  onSwipeToDelete: (Action, Task) -> Unit,
 ) {
   if (tasks.isEmpty()) {
     EmptyContent()
@@ -98,9 +70,9 @@ fun HandleListContent(
 @ExperimentalMaterialApi
 @Composable
 fun DisplayTasks(
-  tasks: List<AllTodosQuery.Todo>,
+  tasks: List<Task>,
   navigateToTaskScreen: (taskId: Int) -> Unit,
-  onSwipeToDelete: (Action, AllTodosQuery.Todo) -> Unit,
+  onSwipeToDelete: (Action, Task) -> Unit,
 ) {
   LazyColumn {
     items(
@@ -115,7 +87,7 @@ fun DisplayTasks(
 
       if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
         val scope = rememberCoroutineScope()
-        LaunchedEffect(key1 = true) {
+        LaunchedEffect(key1 = onSwipeToDelete) {
           scope.launch {
             delay(300)
             onSwipeToDelete(Action.DELETE, todoTask)
@@ -187,7 +159,7 @@ fun RedBackground(degrees: Float) {
 @ExperimentalMaterialApi
 @Composable
 fun TaskItem(
-  todoTask: AllTodosQuery.Todo,
+  todoTask: Task,
   navigateToTaskScreen: (taskId: Int) -> Unit,
 ) {
   Surface(
@@ -196,7 +168,7 @@ fun TaskItem(
     shape = RectangleShape,
     elevation = TASK_ITEM_ELEVATION,
     onClick = {
-      navigateToTaskScreen(todoTask.id)
+      todoTask.id?.let { navigateToTaskScreen(it) }
     }
   ) {
     Column(
@@ -205,14 +177,16 @@ fun TaskItem(
         .fillMaxWidth()
     ) {
       Row {
-        Text(
-          text = todoTask.title,
-          color = MaterialTheme.colors.taskItemTextColor,
-          style = MaterialTheme.typography.h5,
-          fontWeight = FontWeight.Bold,
-          maxLines = 1,
-          modifier = Modifier.weight(8f)
-        )
+        todoTask.title?.let {
+          Text(
+            text = it,
+            color = MaterialTheme.colors.taskItemTextColor,
+            style = MaterialTheme.typography.h5,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            modifier = Modifier.weight(8f)
+          )
+        }
         Box(
           modifier = Modifier
             .fillMaxWidth()
@@ -232,14 +206,16 @@ fun TaskItem(
           }
         }
       }
-      Text(
-        text = todoTask.description,
-        modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.taskItemTextColor,
-        style = MaterialTheme.typography.subtitle1,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis
-      )
+      todoTask.description?.let {
+        Text(
+          text = it,
+          modifier = Modifier.fillMaxWidth(),
+          color = MaterialTheme.colors.taskItemTextColor,
+          style = MaterialTheme.typography.subtitle1,
+          maxLines = 2,
+          overflow = TextOverflow.Ellipsis
+        )
+      }
     }
   }
 }
@@ -249,7 +225,7 @@ fun TaskItem(
 @Preview
 fun TaskItemPreview() {
   TaskItem(
-    todoTask = AllTodosQuery.Todo(0, "Title", "Some random text...", false),
+    todoTask = Task(0, "Title", "Some random text...", false),
     navigateToTaskScreen = {}
   )
 }
